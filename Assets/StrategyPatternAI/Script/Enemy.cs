@@ -27,7 +27,7 @@ public enum EEnemyState
 
 }
 
-public abstract class Enemy : MonoBehaviour
+public abstract class Enemy
 {
     public Stat stat;
 
@@ -46,7 +46,7 @@ public abstract class Enemy : MonoBehaviour
         }
         else
         {
-            transform.LookAt(player.transform);
+            
         }
     }
 
@@ -59,46 +59,12 @@ public abstract class Enemy : MonoBehaviour
 
     public virtual void Die()
     {
-        if(stat.hp <= 0)
-        {
-            Destroy(gameObject);
-        }
     }
 
     protected virtual void Start()
     {
-        circleCol = GetComponent<CircleCollider2D>();
+
     }
-
-    protected virtual void Update()
-    {
-        strategy.Move();
-        strategy.Attack();
-        strategy.Die();
-
-        
-    }
-
-    protected virtual void OnTriggerEnter2D(Collider2D collision)
-    {
-        player = collision.GetComponent<Player>();
-
-        if (player != null)
-        {
-            isDetected = true;
-        }
-    }
-
-    protected virtual void OnTriggerExit2D(Collider2D collision)
-    {
-        player = collision.GetComponent<Player>();
-
-        if(player != null)
-        {
-            isDetected = false;
-        }
-    }
-
 
 }
 
