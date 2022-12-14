@@ -37,6 +37,8 @@ public abstract class Enemy
 
     private Player player;
 
+    public Vector2 targetPos;
+
     //protected Strategy strategy = new Strategy();
 
 
@@ -45,19 +47,35 @@ public abstract class Enemy
     {
         if (isDetected == false)
         {
-            RandomMove();
+
         }
         else
         {
             mytransform.LookAt(targetTransform);
 
-            mytransform.position = Vector3.forward * stat.moveSpd;
         }
     }
 
-    private void RandomMove()
+    private void RandomPos()
     {
+        var screenheight = Screen.height / 2;
+        var screenwidth = Screen.width / 2;
 
+        var randtargetPosx = Random.Range(-screenwidth, screenwidth);
+        var randtargetPosy = Random.Range(-screenheight, screenheight);
+
+        targetPos = Camera.main.ScreenToViewportPoint(new Vector2(randtargetPosx, randtargetPosy));
+    }
+
+    private IEnumerator CMoveTargetPos()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.01f);
+            //가다가 Player를 감지 했을 경우 공격
+
+            
+        }
     }
 
     public abstract void Attack();
@@ -105,11 +123,7 @@ public class Strategy
     {
         thisEnemy.Move(mytransform, targetTransform);
 
-        var screenheight = Screen.height / 2;
-        var screenwidth = Screen.width / 2;
 
-        var randtargetPosx = Random.Range(-screenwidth, screenwidth);
-        var randtargetPosy = Random.Range(-screenheight, screenheight);
     }
 
     private IEnumerator CTargetMoving(float posx, float posy)
@@ -117,7 +131,7 @@ public class Strategy
         while (true)
         {
             yield return new WaitForSeconds(0.01f);
-            
+
         }
     }
 
