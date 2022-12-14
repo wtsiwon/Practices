@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class AI : MonoBehaviour
@@ -8,30 +9,37 @@ public class AI : MonoBehaviour
 
     public Player target;
 
-    public Enemy[] enemies;
-
     private CircleCollider2D cirCol;
+
+    public Enemy enemy;
 
     private void Start()
     {
         cirCol = GetComponent<CircleCollider2D>();
-        
-        strategy.StrategyInit(type);
+
+        strategy = new Strategy(this);
+        enemy = strategy.StrategyInit(type);
     }
 
-    private Strategy strategy = new Strategy();
+    private Strategy strategy;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.TryGetComponent(out Player player))
         {
-            target = collision.GetComponent<Player>();
+            target = player;
         }
+    }
+
+    private void Update()
+    {
+
     }
 
     public void Move()
     {
-        strategy.Move(transform);
+        strategy.Move();
+        StartCoroutine(enemy.moveTargetPos);
     }
 
     public void Attack()
@@ -43,7 +51,4 @@ public class AI : MonoBehaviour
     {
         strategy.Die();
     }
-    
-
-
 }

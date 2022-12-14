@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Archer : MonoBehaviour
+public class Archer : Enemy
 {
-    // Start is called before the first frame update
-    void Start()
+
+    public Archer(AI _context) : base(_context)
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Attack()
     {
-        
+
     }
 }

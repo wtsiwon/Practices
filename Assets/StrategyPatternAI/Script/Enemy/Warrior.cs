@@ -7,9 +7,14 @@ public class Warrior : Enemy
     [SerializeField]
     private CircleCollider2D attackRange;
 
-    public override void Move(Transform mytransform, Transform targetTransform)
+    public Warrior(AI _context) : base(_context)
     {
-        base.Move(mytransform, targetTransform);
+
+    }
+
+    public override void Move()
+    {
+        base.Move();
     }
 
     public override void Attack()
