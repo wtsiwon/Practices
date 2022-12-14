@@ -37,16 +37,21 @@ public abstract class Enemy
 
     private Player player;
 
-    protected Strategy strategy = new Strategy();
-    public virtual void Move()
+    //protected Strategy strategy = new Strategy();
+
+
+
+    public virtual void Move(Transform mytransform, Transform targetTransform)
     {
-        if(isDetected == false)
+        if (isDetected == false)
         {
             RandomMove();
         }
         else
         {
-            
+            mytransform.LookAt(targetTransform);
+
+            mytransform.position = Vector3.forward * stat.moveSpd;
         }
     }
 
@@ -59,9 +64,10 @@ public abstract class Enemy
 
     public virtual void Die()
     {
+
     }
 
-    protected virtual void Start()
+    public void SetEnemy(Enemy enemy)
     {
 
     }
@@ -77,7 +83,7 @@ public class Strategy
         switch (type)
         {
             case EAIType.Warrior:
-                
+                thisEnemy = new Warrior();
                 break;
             case EAIType.Assassin:
 
@@ -95,9 +101,24 @@ public class Strategy
         }
     }
 
-    public void Move()
+    public void Move(Transform mytransform, Transform targetTransform = null)
     {
-        thisEnemy.Move();
+        thisEnemy.Move(mytransform, targetTransform);
+
+        var screenheight = Screen.height / 2;
+        var screenwidth = Screen.width / 2;
+
+        var randtargetPosx = Random.Range(-screenwidth, screenwidth);
+        var randtargetPosy = Random.Range(-screenheight, screenheight);
+    }
+
+    private IEnumerator CTargetMoving(float posx, float posy)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.01f);
+            
+        }
     }
 
     public void Attack()
