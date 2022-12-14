@@ -2,17 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Assasin : MonoBehaviour
+public class Assasin : Enemy
 {
-    // Start is called before the first frame update
-    void Start()
+    public Assasin(AI _context) : base(_context)
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+
+
+    public override void Attack()
     {
-        
+        throw new System.NotImplementedException();
+    }
+
+    public override void Die()
+    {
+        base.Die();
     }
 }
