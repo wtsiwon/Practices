@@ -105,6 +105,10 @@ public class AI : MonoBehaviour
                 //맞으면 타겟선정
                 enemy.targetObj = collider.gameObject;
             }
+            else
+            {
+                enemy.targetObj = null;
+            }
         }
     }
 
