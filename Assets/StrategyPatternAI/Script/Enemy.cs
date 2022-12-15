@@ -77,17 +77,16 @@ public abstract class Enemy : Entity
         //감지한 Object가 없을때
         if (targetObj == null)
         {
-
+            RandomPos();
             if (transform.position == targetPos || targetPos == Vector3.zero)
             {
-                RandomPos();
             }
         }
         else
         {
             targetPos = targetObj.transform.position;
         }
-
+        transform.position = Vector3.MoveTowards(transform.position, targetPos, stat.moveSpd * Time.deltaTime);
         //Vector3 vPos = transform.position;
         //Vector3 vDist = RandomPos() - vPos;
         //Vector3 vDir = vDist.normalized;
@@ -117,11 +116,11 @@ public abstract class Enemy : Entity
         while (true)
         {
             yield return new WaitForSeconds(0.01f);
-            
+
             //타겟이 있는가
             //거리가 일정이상으로 가깝다면 이동끝
 
-            if(targetObj == null || context.state != EState.Attack)
+            if (targetObj == null || context.state != EState.Attack)
             {
                 Move();
             }
@@ -142,7 +141,7 @@ public abstract class Enemy : Entity
         //if(Vector3.Distance(center,targetPos) < radius)
 
         //공격범위안에 타겟이 있는가
-        if(Mathf.Pow(radius,2) > Mathf.Pow(targetPos.x,2) - Mathf.Pow(center.x, 2) +   
+        if (Mathf.Pow(radius, 2) > Mathf.Pow(targetPos.x, 2) - Mathf.Pow(center.x, 2) +
             Mathf.Pow(targetPos.y, 2) - Mathf.Pow(center.y, 2))
         {
             return true;
@@ -211,7 +210,6 @@ public class Strategy
     {
         thisEnemy.Die();
     }
-
 }
 
 

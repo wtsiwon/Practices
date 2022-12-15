@@ -11,7 +11,7 @@ public class AI : MonoBehaviour
 
     private CircleCollider2D cirCol;
 
-    [HideInInspector]
+    
     public Enemy enemy;
 
     private void Start()
@@ -38,7 +38,6 @@ public class AI : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.01f);
-
             //타겟이 있는가
             //거리가 일정이상으로 가깝다면 이동끝
 
