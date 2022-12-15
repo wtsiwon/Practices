@@ -19,7 +19,7 @@ public class Warrior : Enemy
 
     public override void Attack()
     {
-
+        Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, stat.atkRange);
     }
 
     public override void Die()

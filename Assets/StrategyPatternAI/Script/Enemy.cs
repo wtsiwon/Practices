@@ -19,12 +19,14 @@ public struct Stat
     public float moveSpd;
     public float atkRange;
     public float atkSpd;
+    public float detectRange;
 }
 
 //Enemy의 상태
-public enum EEnemyState
+public enum EState
 {
-    Moving,
+    RandomMoving,
+    TargetingMoving,
     Attack,
 }
 
@@ -42,9 +44,12 @@ public abstract class Enemy : Entity
 
     private Player player;
 
-    public Vector2 targetPos;
+    public Vector3 targetPos = Vector3.zero;
 
     public IEnumerator moveTargetPos;
+
+    [Tooltip("타겟 Object")]
+    public GameObject targetObj;
 
     //protected Strategy strategy = new Strategy();
 
@@ -62,26 +67,49 @@ public abstract class Enemy : Entity
         moveTargetPos = CMoveTargetPos();
     }
 
-    T GetComponent<T>()
+    public T GetComponent<T>()
     {
         return context.GetComponent<T>();
     }
 
     public virtual void Move()
     {
+        //감지한 Object가 없을때
+        if (targetObj == null)
+        {
 
+            if (transform.position == targetPos || targetPos == Vector3.zero)
+            {
+                RandomPos();
+            }
+        }
+        else
+        {
+            targetPos = targetObj.transform.position;
+        }
+
+        //Vector3 vPos = transform.position;
+        //Vector3 vDist = RandomPos() - vPos;
+        //Vector3 vDir = vDist.normalized;
+
+        //transform.LookAt(RandomPos());
+
+        //transform.position = vDir * stat.moveSpd;
     }
 
-    private Vector2 RandomPos()
+    /// <summary>
+    /// 랜덤으로 Position선정
+    /// </summary>
+    public void RandomPos()
     {
-        var screenheight = Screen.height / 2;
-        var screenwidth = Screen.width / 2;
+        var screenheight = Screen.height;
+        var screenwidth = Screen.width;
 
-        var randtargetPosx = Random.Range(-screenwidth, screenwidth);
-        var randtargetPosy = Random.Range(-screenheight, screenheight);
+        var randtargetPosx = Random.Range(0, screenwidth);
+        var randtargetPosy = Random.Range(0, screenheight);
 
-        Vector2 targetPos = Camera.main.ScreenToViewportPoint(new Vector2(randtargetPosx, randtargetPosy));
-        return targetPos;
+        var randPosition = Camera.main.ScreenToWorldPoint(new Vector2(randtargetPosx, randtargetPosy));
+        targetPos = randPosition + new Vector3(0, 0, 10);//카메라 Pos라서 +10;
     }
 
     private IEnumerator CMoveTargetPos()
@@ -89,24 +117,37 @@ public abstract class Enemy : Entity
         while (true)
         {
             yield return new WaitForSeconds(0.01f);
-            if (player) yield break;
+            
+            //타겟이 있는가
             //거리가 일정이상으로 가깝다면 이동끝
-            if (Vector2.Distance(RandomPos(), transform.position) <= stat.atkRange)
+
+            if(targetObj == null || context.state != EState.Attack)
             {
-                yield break;
+                Move();
             }
-
-            //가다가 Player를 감지 했을 경우 공격
-
-            Vector2 vPos = transform.position;
-            Vector2 vDist = RandomPos() - vPos;
-            Vector2 vDir = vDist.normalized;
-
-            transform.LookAt(RandomPos());
-
-            transform.position = vDir * stat.moveSpd;
-
+            else
+            {
+                Attack();
+                yield return new WaitForSeconds(stat.atkSpd);
+            }
         }
+    }
+
+    /// <summary>
+    /// 공격범위인가
+    /// </summary>
+    /// <returns></returns>
+    private bool AttackDistanceCheck(Vector3 targetPos, Vector3 center, float radius)
+    {
+        //if(Vector3.Distance(center,targetPos) < radius)
+
+        //공격범위안에 타겟이 있는가
+        if(Mathf.Pow(radius,2) > Mathf.Pow(targetPos.x,2) - Mathf.Pow(center.x, 2) +   
+            Mathf.Pow(targetPos.y, 2) - Mathf.Pow(center.y, 2))
+        {
+            return true;
+        }
+        return false;
     }
 
     public abstract void Attack();
@@ -120,8 +161,8 @@ public abstract class Enemy : Entity
 
 public class Strategy
 {
-    Enemy thisEnemy = null;
-    AI context;
+    private Enemy thisEnemy = null;
+    private AI context;
     public Strategy(AI _context)
     {
         context = _context;
@@ -150,18 +191,15 @@ public class Strategy
         }
     }
 
+    public Enemy GetEnemy()
+    {
+        return thisEnemy;
+    }
+
+
     public void Move()
     {
         thisEnemy.Move();
-    }
-
-    private IEnumerator CTargetMoving(float posx, float posy)
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.01f);
-
-        }
     }
 
     public void Attack()
