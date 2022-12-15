@@ -602,7 +602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  target: {fileID: 0}
+  state: 0
 --- !u!58 &1114256402
 CircleCollider2D:
   m_ObjectHideFlags: 0

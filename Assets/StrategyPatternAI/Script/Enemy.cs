@@ -26,8 +26,8 @@ public struct Stat
 public enum EState
 {
     RandomMoving,
-    TargetingMoving,
     Attack,
+    TargetingMoving,
 }
 
 public enum EAttackType
@@ -67,7 +67,7 @@ public abstract class Enemy : Entity
         moveTargetPos = CMoveTargetPos();
     }
 
-    public T GetComponent<T>()
+    public T GetComponent<T>() where T : MonoBehaviour
     {
         return context.GetComponent<T>();
     }
@@ -77,9 +77,9 @@ public abstract class Enemy : Entity
         //감지한 Object가 없을때
         if (targetObj == null)
         {
-            RandomPos();
             if (transform.position == targetPos || targetPos == Vector3.zero)
             {
+                RandomPos();
             }
         }
         else
@@ -115,12 +115,12 @@ public abstract class Enemy : Entity
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(1f);
 
             //타겟이 있는가
             //거리가 일정이상으로 가깝다면 이동끝
 
-            if (targetObj == null || context.state != EState.Attack)
+            if (targetObj == null || context.state.Equals(EState.Attack) == false)
             {
                 Move();
             }
@@ -132,22 +132,7 @@ public abstract class Enemy : Entity
         }
     }
 
-    /// <summary>
-    /// 공격범위인가
-    /// </summary>
-    /// <returns></returns>
-    private bool AttackDistanceCheck(Vector3 targetPos, Vector3 center, float radius)
-    {
-        //if(Vector3.Distance(center,targetPos) < radius)
-
-        //공격범위안에 타겟이 있는가
-        if (Mathf.Pow(radius, 2) > Mathf.Pow(targetPos.x, 2) - Mathf.Pow(center.x, 2) +
-            Mathf.Pow(targetPos.y, 2) - Mathf.Pow(center.y, 2))
-        {
-            return true;
-        }
-        return false;
-    }
+    
 
     public abstract void Attack();
 
