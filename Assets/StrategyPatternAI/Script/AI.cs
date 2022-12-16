@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -11,8 +12,10 @@ public class AI : MonoBehaviour
 
     private CircleCollider2D cirCol;
 
-    
-    public Enemy enemy;
+
+    public Enemy enemy => strategy.GetEnemy();
+
+    private IEnumerator CMoveTarget;
 
     private void Start()
     {
@@ -20,10 +23,10 @@ public class AI : MonoBehaviour
 
         strategy = new Strategy(this);
         strategy.StrategyInit(type);
-        
-        enemy = strategy.GetEnemy();
 
-        StartCoroutine(nameof(CMoveTargetPos));
+        CMoveTarget = CMoveTargetPos();
+        
+        StartCoroutine(CMoveTarget);
     }
 
     private Strategy strategy;
@@ -31,6 +34,14 @@ public class AI : MonoBehaviour
     private void Update()
     {
 
+    }
+
+    private IEnumerator CUpdate()
+    {
+        yield return new WaitForSeconds(1f);
+        print(state);
+        print(enemy.targetObj);
+        
     }
 
     private IEnumerator CMoveTargetPos()
