@@ -13,7 +13,7 @@ public class AI : MonoBehaviour
     private CircleCollider2D cirCol;
 
 
-    public Enemy enemy => strategy.GetEnemy();
+    public Enemy enemy => strategy != null ? strategy.GetEnemy() : null;
 
     private IEnumerator CMoveTarget;
 
