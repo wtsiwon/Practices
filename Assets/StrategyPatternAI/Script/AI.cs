@@ -9,8 +9,6 @@ public class AI : MonoBehaviour
 
     public EState state;
 
-    public bool isAttack;
-
     private CircleCollider2D cirCol;
 
     
@@ -41,11 +39,11 @@ public class AI : MonoBehaviour
         {
             Check();
             yield return new WaitForSeconds(0.02f);
-
+            print(enemy.targetObj);
             //타겟이 있는가
             //거리가 일정이상으로 가깝다면 이동끝
 
-            if (enemy.targetObj == null || isAttack == true)
+            if (enemy.targetObj == null || state == EState.TargetingMoving)
             {
                 Move();
             }
@@ -82,8 +80,11 @@ public class AI : MonoBehaviour
         }
         else
         {
-            isAttack 
-                = AttackDistanceCheck(enemy.targetObj.transform.position, transform.position, enemy.stat.atkRange);
+            bool check = AttackDistanceCheck(enemy.targetObj.transform.position, transform.position, enemy.stat.atkRange);
+            if(check == true)
+            {
+                state = EState.Attack;
+            }
         }
     }
 
@@ -104,10 +105,10 @@ public class AI : MonoBehaviour
             {
                 //맞으면 타겟선정
                 enemy.targetObj = collider.gameObject;
-            }
-            else
-            {
-                enemy.targetObj = null;
+                if(state == EState.RandomMoving)
+                {
+                    state = EState.TargetingMoving; 
+                }
             }
         }
     }

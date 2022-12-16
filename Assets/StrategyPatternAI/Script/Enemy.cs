@@ -84,6 +84,7 @@ public abstract class Enemy : Entity
         }
         else
         {
+            Debug.Log("ㅠ");
             targetPos = targetObj.transform.position;
         }
         transform.position = Vector3.MoveTowards(transform.position, targetPos, stat.moveSpd * Time.deltaTime);
@@ -120,7 +121,7 @@ public abstract class Enemy : Entity
             //타겟이 있는가
             //거리가 일정이상으로 가깝다면 이동끝
 
-            if (targetObj == null || context.state.Equals(EState.Attack) == false)
+            if (targetObj == null || context.state.Equals(EState.TargetingMoving) == true)
             {
                 Move();
             }
@@ -131,10 +132,21 @@ public abstract class Enemy : Entity
             }
         }
     }
-
     
+    public virtual void Attack()
+    {
+        //공격 범위가 타겟과의 거리보다 크다면(안에 들어옴)
+        if (stat.atkRange >= Vector3.Distance(targetPos, transform.position))
+        {
+            context.state = EState.Attack;
+        }
+        //Animation
+    }
 
-    public abstract void Attack();
+    public virtual void GiveDamage(float dmg)
+    {
+        targetObj.GetComponent<Player>().hp -= dmg;
+    }
 
     public virtual void Die()
     {
