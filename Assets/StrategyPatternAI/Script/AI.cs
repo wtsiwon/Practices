@@ -12,45 +12,73 @@ public class AI : MonoBehaviour
 
     private CircleCollider2D cirCol;
 
-
-    public Enemy enemy => strategy != null ? strategy.GetEnemy() : null;
+    public Enemy enemy = null;
 
     private IEnumerator CMoveTarget;
+
+    [HideInInspector]
+    public Animator animator;
 
     private void Start()
     {
         cirCol = GetComponent<CircleCollider2D>();
+        animator = GetComponent<Animator>();
 
-        strategy = new Strategy(this);
-        strategy.StrategyInit(type);
+        StrategyInit(type);
 
         CMoveTarget = CMoveTargetPos();
         
         StartCoroutine(CMoveTarget);
+        StartCoroutine(nameof(CCheck));
     }
 
-    private Strategy strategy;
+    public new Coroutine StartCoroutine(string methodName)
+    {
+        return StartCoroutine(methodName);
+    }
+
+    private void StrategyInit(EAIType type)
+    {
+        switch (type)
+        {
+            case EAIType.Warrior:
+                enemy = new Warrior(this);
+                break;
+            case EAIType.Assassin:
+                enemy = new Assasin(this);
+                break;
+            case EAIType.Wizard:
+                enemy = new Wizard(this);
+                break;
+            case EAIType.Archer:
+                enemy = new Archer(this);
+                break;
+            default:
+                Debug.Assert(false, "존재하지 않는 타입입니다");
+                break;
+        }
+    }
 
     private void Update()
     {
 
     }
 
-    private IEnumerator CUpdate()
+    //Check 
+    private IEnumerator CCheck()
     {
         yield return new WaitForSeconds(1f);
         print(state);
         print(enemy.targetObj);
-        
     }
 
     private IEnumerator CMoveTargetPos()
     {
         while (true)
         {
-            Check();
             yield return new WaitForSeconds(0.02f);
-            print(enemy.targetObj);
+
+            yield return StartCoroutine(nameof(Check));
             //타겟이 있는가
             //거리가 일정이상으로 가깝다면 이동끝
 
@@ -66,6 +94,24 @@ public class AI : MonoBehaviour
         }
     }
 
+    private IEnumerator Check()
+    {
+        if(enemy.targetObj == null)
+        {
+            CheckGetTarget();
+        }
+        else
+        {
+            bool check = AttackDistanceCheck(enemy.targetObj.transform.position, transform.position, enemy.stat.atkRange);
+
+            if(check == true)
+            {
+                state = EState.Attack;
+            }
+        }
+        yield return null;
+    }
+    
     /// <summary>
     /// 공격범위인가
     /// </summary>
@@ -75,28 +121,11 @@ public class AI : MonoBehaviour
         //if(Vector3.Distance(center,targetPos) < radius)
 
         //공격범위안에 타겟이 있는가
-        if (Mathf.Pow(radius, 2) > Mathf.Pow(targetPos.x, 2) - Mathf.Pow(center.x, 2) +
-            Mathf.Pow(targetPos.y, 2) - Mathf.Pow(center.y, 2))
+        if (radius >= Vector3.Distance(center, targetPos))
         {
             return true;
         }
         return false;
-    }
-
-    private void Check()
-    {
-        if(enemy.targetObj == null)
-        {
-            CheckGetTarget();
-        }
-        else
-        {
-            bool check = AttackDistanceCheck(enemy.targetObj.transform.position, transform.position, enemy.stat.atkRange);
-            if(check == true)
-            {
-                state = EState.Attack;
-            }
-        }
     }
 
     /// <summary>
@@ -118,7 +147,7 @@ public class AI : MonoBehaviour
                 enemy.targetObj = collider.gameObject;
                 if(state == EState.RandomMoving)
                 {
-                    state = EState.TargetingMoving; 
+                    state = EState.TargetingMoving;
                 }
             }
         }
@@ -126,17 +155,17 @@ public class AI : MonoBehaviour
 
     public void Move()
     {
-        strategy.Move();
+        enemy.Move();
     }
 
     public void Attack()
     {
-        strategy.Attack();
+        enemy.Attack();
     }
 
     public void Die()
     {
-        strategy.Die();
+        enemy.Die();
     }
 
     private void OnDrawGizmos()

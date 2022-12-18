@@ -82,12 +82,18 @@ public abstract class Enemy : Entity
                 RandomPos();
             }
         }
-        else
+        else //Ojbect가 감지 되었을 때 
         {
-            Debug.Log("ㅠ");
-            targetPos = targetObj.transform.position;
+            if (context.state != EState.Attack)
+            {
+                targetPos = targetObj.transform.position;
+            }
         }
-        transform.position = Vector3.MoveTowards(transform.position, targetPos, stat.moveSpd * Time.deltaTime);
+
+        if (context.state != EState.Attack)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, stat.moveSpd * Time.deltaTime);
+        }
         //Vector3 vPos = transform.position;
         //Vector3 vDist = RandomPos() - vPos;
         //Vector3 vDir = vDist.normalized;
@@ -112,6 +118,7 @@ public abstract class Enemy : Entity
         targetPos = randPosition + new Vector3(0, 0, 10);//카메라 Pos라서 +10;
     }
 
+
     private IEnumerator CMoveTargetPos()
     {
         while (true)
@@ -132,20 +139,16 @@ public abstract class Enemy : Entity
             }
         }
     }
-    
+
     public virtual void Attack()
     {
-        //공격 범위가 타겟과의 거리보다 크다면(안에 들어옴)
-        if (stat.atkRange >= Vector3.Distance(targetPos, transform.position))
-        {
-            context.state = EState.Attack;
-        }
+
         //Animation
     }
 
     public virtual void GiveDamage(float dmg)
     {
-        targetObj.GetComponent<Player>().hp -= dmg;
+
     }
 
     public virtual void Die()
@@ -154,59 +157,3 @@ public abstract class Enemy : Entity
     }
 
 }
-
-public class Strategy
-{
-    private Enemy thisEnemy = null;
-    private AI context;
-    public Strategy(AI _context)
-    {
-        context = _context;
-    }
-
-
-    public void StrategyInit(EAIType type)
-    {
-        switch (type)
-        {
-            case EAIType.Warrior:
-                thisEnemy = new Warrior(context);
-                break;
-            case EAIType.Assassin:
-                thisEnemy = new Assasin(context);
-                break;
-            case EAIType.Wizard:
-                thisEnemy = new Wizard(context);
-                break;
-            case EAIType.Archer:
-                thisEnemy = new Archer(context);
-                break;
-            default:
-                Debug.Assert(false, "존재하지 않는 타입입니다");
-                break;
-        }
-    }
-
-    public Enemy GetEnemy()
-    {
-        return thisEnemy;
-    }
-
-
-    public void Move()
-    {
-        thisEnemy.Move();
-    }
-
-    public void Attack()
-    {
-        thisEnemy.Attack();
-    }
-
-    public void Die()
-    {
-        thisEnemy.Die();
-    }
-}
-
-
