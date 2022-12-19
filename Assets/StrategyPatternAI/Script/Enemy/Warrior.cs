@@ -13,10 +13,11 @@ public class Warrior : Enemy
     public Warrior(AI _context) : base(_context)
     {
         stat.moveSpd = 10f;
-        stat.atkSpd = 0.5f;
+        stat.atkSpd = 1.6f;
         stat.name = "Warrior";
         stat.atkRange = 1.5f;
         stat.detectRange = 5f;
+        secondAttackDelay = 0.3f;
     }
 
     public override void Move()
@@ -26,7 +27,7 @@ public class Warrior : Enemy
 
     public override void Attack()
     {
-        context.StartCoroutine(nameof(CSettQ));
+        context.MyStartCoroutine(CSettQ());
     }
 
     private IEnumerator CSettQ()

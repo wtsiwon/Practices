@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
         spriteRenderer.color = Color.white;
 
         GameObject text = Instantiate(damageText, transform.position, Quaternion.identity);
-        text.GetComponent<TextMeshPro>().text = damage.ToString();
+        text.GetComponent<TextMeshProUGUI>().text = damage.ToString();
 
         StartCoroutine(CTextEffect(text));
         yield return new WaitForSeconds(textMoveTime);
@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
     private IEnumerator CTextEffect(GameObject textEffect)
     {
         float time = 0;
-        TextMeshPro text = textEffect.gameObject.GetComponent<TextMeshPro>();
+        TextMeshProUGUI text = textEffect.gameObject.GetComponent<TextMeshProUGUI>();
 
         while (time < textMoveTime)
         {

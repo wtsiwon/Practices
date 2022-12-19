@@ -32,7 +32,7 @@ public class AI : MonoBehaviour
         StartCoroutine(nameof(CCheck));
     }
 
-    public new Coroutine StartCoroutine(string methodName)
+    public Coroutine MyStartCoroutine(IEnumerator methodName)
     {
         return StartCoroutine(methodName);
     }
